@@ -1,0 +1,163 @@
+<!doctype html>
+<!--detta är formulärsidan för att lägga till en medicin
+när du trycker Save skickas POST till /medicines (controller @PostMapping("/medicines"))-->
+<html lang="sv" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <!--standart meta-->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <!--titel i webbläsarfliken-->
+  <title>Add medicine</title>
+
+  <!--NYTT: enkel CSS för bättre UI (matchar list-sidan)-->
+  <style>
+    body{
+      font-family: Arial, Helvetica, sans-serif;
+      margin:0;
+      background:#f6f7fb;
+      color:#111827;
+    }
+
+    header{
+      background:#111827;
+      color:white;
+      padding:16px;
+    }
+
+    header h1{
+      margin:0;
+      font-size:22px;
+    }
+
+    main{
+      max-width:720px;
+      margin:0 auto;
+      padding:16px;
+    }
+
+    .card{
+      background:white;
+      border-radius:14px;
+      padding:16px;
+      box-shadow:0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    .row{
+      margin-bottom:12px;
+    }
+
+    label{
+      display:block;
+      font-weight:700;
+      margin-bottom:6px;
+      font-size:14px;
+    }
+
+    input{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #d1d5db;
+      font-size:15px;
+      box-sizing:border-box;
+      outline:none;
+    }
+
+    input:focus{
+      border-color:#2563eb;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      margin-top:14px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    button{
+      border:none;
+      padding:10px 14px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:700;
+    }
+
+    .btn-save{
+      background:#2563eb;
+      color:white;
+    }
+
+    .btn-cancel{
+      display:inline-block;
+      padding:10px 14px;
+      border-radius:10px;
+      background:#e5e7eb;
+      color:#111827;
+      text-decoration:none;
+      font-weight:700;
+    }
+
+    .hint{
+      color:#6b7280;
+      font-size:13px;
+      margin-top:6px;
+    }
+  </style>
+</head>
+
+<body>
+
+<!--NYTT: header för samma look som list-sidan-->
+<header>
+  <h1>Add medicine</h1>
+</header>
+
+<main>
+
+  <!--NYTT: card så formuläret ser “appigt” ut-->
+  <div class="card">
+
+    <!--formuläret skickar data via POST till /medicines-->
+    <form method="post" action="/medicines">
+
+      <!--Name-->
+      <div class="row">
+        <label for="name">Name</label>
+        <!--name="name" måste matcha @RequestParam String name-->
+        <input id="name" name="name" required placeholder="e.g. Alvedon">
+      </div>
+
+      <!--Time-->
+      <div class="row">
+        <label for="time">Time</label>
+        <!--name="time" måste matcha @RequestParam String time-->
+        <!--type=time ger format HH:mm som LocalTime.parse(time) kan läsa-->
+        <input id="time" name="time" type="time" required>
+        <div class="hint">Choose the time when you should take the medicine.</div>
+      </div>
+
+      <!--Description-->
+      <div class="row">
+        <label for="description">Description</label>
+        <!--name="description" måste matcha @RequestParam String description-->
+        <input id="description" name="description" placeholder="e.g. after breakfast">
+        <div class="hint">Optional. Example: before food / after food.</div>
+      </div>
+
+      <!--Knappar-->
+      <div class="actions">
+        <button class="btn-save" type="submit">Save</button>
+        <!--Cancel går tillbaka till listan-->
+        <a class="btn-cancel" href="/medicines">Cancel</a>
+      </div>
+
+    </form>
+
+  </div>
+
+</main>
+
+</body>
+</html>

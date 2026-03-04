@@ -1,0 +1,313 @@
+<!doctype html>
+<!--detta är list-sidan
+den visar alla mediciner som som controllern skickar in via:
+model.addAttribute("medicines", store.getAll());-->
+<html lang="sv" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!--standart meta-->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!--titel i webbläsarfliken-->
+  <title>Medicines</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#111827">
+
+  <!--NYTT: enkel CSS för bättre UI (mobilvänligt)-->
+  <style>
+    body{
+      font-family: Arial, Helvetica, sans-serif;
+      margin:0;
+      background:#f6f7fb;
+      color:#111827;
+    }
+
+    header{
+      background:#111827;
+      color:white;
+      padding:16px;
+    }
+
+    header h1{
+      margin:0;
+      font-size:22px;
+    }
+
+    main{
+      max-width:720px;
+      margin:0 auto;
+      padding:16px;
+    }
+
+    .add{
+      display:inline-block;
+      background:#2563eb;
+      color:white;
+      text-decoration:none;
+      padding:10px 14px;
+      border-radius:10px;
+      font-weight:600;
+    }
+
+    .empty{
+      margin-top:14px;
+      color:#6b7280;
+    }
+
+    ul{
+      list-style:none;
+      padding:0;
+      margin:16px 0 0 0;
+    }
+
+    li{
+      background:white;
+      border-radius:14px;
+      padding:14px;
+      margin-bottom:12px;
+      box-shadow:0 4px 14px rgba(0,0,0,0.08);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .info{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      min-width:220px;
+    }
+
+    .topline{
+      display:flex;
+      gap:8px;
+      align-items:baseline;
+      flex-wrap:wrap;
+    }
+
+    .time{
+      font-size:18px;
+      font-weight:700;
+    }
+
+    .name{
+      font-size:16px;
+      font-weight:600;
+    }
+
+    .desc{
+      font-size:14px;
+      color:#6b7280;
+    }
+
+    .status{
+      font-size:13px;
+      font-weight:700;
+      padding:3px 8px;
+      border-radius:999px;
+      width:fit-content;
+    }
+
+    .status.taken{
+      background:#dcfce7;
+      color:#166534;
+    }
+
+    .status.not{
+      background:#fee2e2;
+      color:#991b1b;
+    }
+
+    .actions{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+
+    button{
+      border:none;
+      padding:9px 12px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:600;
+    }
+
+    .btn-take{
+      background:#e5e7eb;
+      color:#111827;
+    }
+
+    .btn-delete{
+      background:#ef4444;
+      color:white;
+    }
+
+    button:hover{
+      filter:brightness(0.97);
+    }
+  </style>
+</head>
+
+<body>
+
+<!--NYTT: header för snyggare utseende-->
+<header>
+  <!--Rubrik-->
+  <h1>Medicine list</h1>
+</header>
+
+<!--NYTT: main wrapper för bättre spacing-->
+<main>
+
+  <!--länk till formulärsidan(/medicines/new)-->
+  <p>
+    <a class="add" href="/medicines/new">+ Add medicine</a>
+  </p>
+
+  <!--om listan är tom, visa text-->
+  <div class="empty" th:if="${#lists.isEmpty(medicines)}">
+    No medicines yet.
+  </div>
+
+  <!--lista med alla mediciner.
+  th:each loopar igenom listan medicines
+  varje rad får variabeln m (en medicine).-->
+  <ul>
+
+    <!--NYTT: data-attribut används av alarm-scriptet-->
+    <li th:each="m : ${medicines}"
+        th:attr="data-time=${#temporals.format(m.time,'HH:mm')},
+                 data-name=${m.name},
+                 data-taken=${m.taken}">
+
+      <!--th:text="${m}"betyder: 
+      anropa m.tostring() och skriv ut texten
+      (08:00-alvedon används bara om Thymeleaf inte körs)-->
+      <!--NYTT: vi visar tid, namn och beskrivning separat (tydligare än toString)-->
+      <div class="info">
+
+        <div class="topline">
+          <span class="time" th:text="${#temporals.format(m.time,'HH:mm')}">08:00</span>
+          <span class="name" th:text="${m.name}">Alvedon</span>
+        </div>
+
+        <div class="desc" th:text="${m.description}">after breakfast</div>
+
+        <!--status text (grön/röd) men som badge-->
+        <span class="status"
+              th:classappend="${m.taken} ? ' taken' : ' not'"
+              th:text="${m.taken} ? '✔ Taken' : 'Not taken'">
+          Not taken
+        </span>
+
+      </div>
+
+      <div class="actions">
+        <!--knapp för Take/Undo (toggle)-->
+        <form method="post" action="/medicines/toggle" style="display:inline;">
+          <input type="hidden" name="id" th:value="${m.id}">
+          <button class="btn-take" type="submit" th:text="${m.taken} ? 'Undo' : 'Take'">
+            Take
+          </button>
+        </form>
+
+        <!--form för delete.
+        metod=post matchar @PostMapping("/medicines/delete")
+        style in line så att knappen ligger på samma rad-->
+        <form method="post" action="/medicines/delete" style="display:inline;">
+          <!--hidden input skickar med id för just denna medicin.
+          th:value= "${m.id}" betyder m.getId()-->
+          <input type="hidden" name="id" th:value="${m.id}">
+          <button class="btn-delete" type="submit">Delete</button>
+        </form>
+      </div>
+
+    </li>
+  </ul>
+
+</main>
+
+<!--NYTT: alarm-script-->
+<!--NYTT: alarm-script-->
+<script>
+  // Ladda ljud (måste finnas i src/main/resources/static/alarm.mp3)
+  const alarmSound = new Audio("/alarm.mp3");
+  alarmSound.preload = "auto";
+
+  // Viktigt: "låser upp" ljud efter första klicket på sidan
+  let audioUnlocked = false;
+  function unlockAudioOnce(){
+    if (audioUnlocked) return;
+    audioUnlocked = true;
+
+    // en tyst play/pause för att låsa upp ljud i browsern
+    alarmSound.volume = 0;
+    alarmSound.play()
+      .then(() => {
+        alarmSound.pause();
+        alarmSound.currentTime = 0;
+        alarmSound.volume = 1;
+        console.log("Audio unlocked");
+      })
+      .catch(err => console.log("Audio unlock blocked:", err));
+  }
+
+  // kör unlock på första klick/touch
+  document.addEventListener("click", unlockAudioOnce, { once: true });
+  document.addEventListener("touchstart", unlockAudioOnce, { once: true });
+
+  function notify(text){
+    // Försök med web-notification (bättre än alert, blockerar inte)
+    if ("Notification" in window) {
+      if (Notification.permission === "granted") {
+        new Notification(text);
+        return;
+      }
+      if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(p => {
+          if (p === "granted") new Notification(text);
+        });
+      }
+    }
+
+    // fallback: skriv i console istället för alert (alert stoppar JS)
+    console.log(text);
+  }
+
+  function checkMedicines(){
+    const now = new Date();
+    const current =
+      String(now.getHours()).padStart(2,"0") + ":" +
+      String(now.getMinutes()).padStart(2,"0");
+
+    document.querySelectorAll("li[data-time]").forEach(m => {
+      const time = m.dataset.time;
+      const name = m.dataset.name;
+      const taken = m.dataset.taken === "true";
+
+      if (!taken && time === current) {
+        // 1) Ljud först (innan något som kan blockera)
+        alarmSound.currentTime = 0;
+        alarmSound.play().catch(err => console.log("Play blocked:", err));
+
+        // 2) Notis (icke-blockerande)
+        notify("Time to take medicine: " + name);
+      }
+    });
+  }
+
+  // Kör varje 10 sek i test (ändra sen till 60000)
+  setInterval(checkMedicines, 10000);
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/service-worker.js")
+    .then(() => console.log("Service worker registered"))
+    .catch(err => console.log("Service worker error", err));
+}
+</script>
+
+</body>
+</html>
