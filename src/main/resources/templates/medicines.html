@@ -188,7 +188,7 @@ model.addAttribute("medicines", store.getAll());-->
     <li th:each="m : ${medicines}"
         th:attr="data-time=${#temporals.format(m.time,'HH:mm')},
                  data-name=${m.name},
-                 data-taken=${m.taken}">
+                 data-taken=${m.takenToday}">
 
       <!--th:text="${m}"betyder: 
       anropa m.tostring() och skriv ut texten
@@ -205,8 +205,8 @@ model.addAttribute("medicines", store.getAll());-->
 
         <!--status text (grön/röd) men som badge-->
         <span class="status"
-              th:classappend="${m.taken} ? ' taken' : ' not'"
-              th:text="${m.taken} ? '✔ Taken' : 'Not taken'">
+              th:classappend="${m.takenToday} ? ' taken' : ' not'"
+              th:text="${m.takenToday} ? '✔ Taken' : 'Not taken'">
           Not taken
         </span>
 
@@ -216,7 +216,7 @@ model.addAttribute("medicines", store.getAll());-->
         <!--knapp för Take/Undo (toggle)-->
         <form method="post" action="/medicines/toggle" style="display:inline;">
           <input type="hidden" name="id" th:value="${m.id}">
-          <button class="btn-take" type="submit" th:text="${m.taken} ? 'Undo' : 'Take'">
+          <button class="btn-take" type="submit" th:text="${m.takenToday} ? 'Undo' : 'Take'">
             Take
           </button>
         </form>
@@ -307,7 +307,7 @@ model.addAttribute("medicines", store.getAll());-->
   }
 
   // Kör varje 10 sek i test (ändra sen till 60000)
-  setInterval(checkMedicines, 10000);
+  setInterval(checkMedicines, 60000);
 </script>
 
 <script>
