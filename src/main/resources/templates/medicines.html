@@ -39,14 +39,23 @@ model.addAttribute("medicines", store.getAll());-->
     }
 
     .add{
-      display:inline-block;
-      background:#2563eb;
-      color:white;
-      text-decoration:none;
-      padding:10px 14px;
-      border-radius:10px;
-      font-weight:600;
-    }
+  display:block;              /* gör att knappen kan centreras */
+  width:220px;                /* större bredd */
+  margin:20px auto;           /* centrerar knappen */
+  text-align:center;
+
+  background:#2563eb;
+  color:white;
+  text-decoration:none;
+
+  padding:16px 20px;          /* gör knappen högre */
+  border-radius:14px;
+
+  font-size:18px;             /* större text */
+  font-weight:700;
+
+  box-shadow:0 6px 16px rgba(0,0,0,0.15);
+}
 
     .empty{
       margin-top:14px;
