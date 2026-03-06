@@ -4,17 +4,34 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.UUID;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+// @Entity betyder att denna klass ska sparas i databasen som en tabell
+@Entity
 public class Medicine implements Comparable<Medicine>{
 
+    // @Id betyder primärnyckel i databasen
+    @Id
     private String id;
+
     private String name;
     private LocalTime time;
     private String description;
 
-    // NYTT: när den senast blev markerad som "taken"
-    private LocalDate takenDate; // null = aldrig tagen
+    // sparar vilket datum medicinen togs senast
+    private LocalDate takenDate;
 
+    // tom konstruktor krävs av JPA / Hibernate
+    public Medicine() {
+    }
+
+    // vanlig konstruktor som används när vi skapar ny medicin i appen
     public Medicine(String name, LocalTime time, String description){
+
+        if(name == null || name.isBlank()){
+            throw new IllegalArgumentException("name must not be empty");
+        }
 
         if(time == null){
             throw new IllegalArgumentException("time must not be null");
@@ -24,8 +41,7 @@ public class Medicine implements Comparable<Medicine>{
         this.name = name.trim();
         this.description = description == null ? "" : description.trim();
         this.time = time;
-
-        this.takenDate = null; // inte tagen från början
+        this.takenDate = null; // från början inte tagen
     }
 
     public String getId(){
@@ -40,16 +56,16 @@ public class Medicine implements Comparable<Medicine>{
         return time;
     }
 
-    public String getDescription() {
+    public String getDescription(){
         return description;
     }
 
-    // NYTT: true bara om den är tagen IDAG
+    // true bara om medicinen är tagen idag
     public boolean isTakenToday(){
         return takenDate != null && takenDate.equals(LocalDate.now());
     }
 
-    // NYTT: sätt taken för IDAG (true) eller avmarkera (false)
+    // markerar medicinen som tagen idag eller inte tagen
     public void markTakenToday(boolean taken){
         if(taken){
             this.takenDate = LocalDate.now();
