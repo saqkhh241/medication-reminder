@@ -229,29 +229,27 @@ Take
 </main>
 
 <!-- audio-element som innehåller alarm.mp3
-jag har lagt loop här så ljudet fortsätter automatiskt tills jag stoppar det -->
+har lagt loop här så ljudet fortsätter automatiskt tills jag stoppar det -->
 <audio id="alarmAudio" src="/alarm-new.mp3" preload="auto" loop></audio>
 
 <script>
 
 /* ======================================================
-   variabler som jag använder i hela scriptet
+  variabler som  använder i hela scriptet
 ====================================================== */
 
-/* jag hämtar ljudfilen från audio-elementet */
+/*  hämtar ljudfilen från audio-elementet */
 const alarmAudio = document.getElementById("alarmAudio");
 
 /* browsern kräver ett klick innan ljud får spelas */
 let audioUnlocked = false;
 
-/* jag sparar vilken medicin som just nu larmar */
+/* sparar vilken medicin som just nu larmar */
 let activeAlarmId = null;
 
 
-/* ======================================================
-   jag låser upp ljudet efter första klicket
-   annars blockerar browsern ljudet
-====================================================== */
+/*låser upp ljudet efter första klicket
+  annars blockerar browsern ljudet*/
 
 function unlockAudioOnce(){
 
@@ -259,7 +257,7 @@ if(audioUnlocked) return;
 
 audioUnlocked = true;
 
-/* jag spelar och pausar direkt bara för att aktivera ljudet i browsern */
+/* spelar och pausar direkt bara för att aktivera ljudet i browsern */
 alarmAudio.play()
 .then(()=>{
 alarmAudio.pause();
@@ -275,9 +273,9 @@ document.addEventListener("click",unlockAudioOnce,{once:true});
 document.addEventListener("touchstart",unlockAudioOnce,{once:true});
 
 
-/* ======================================================
-   notifikation i browsern
-====================================================== */
+/* 
+  notifikation i browsern
+*/
 
 if("Notification" in window && Notification.permission === "default"){
 Notification.requestPermission();
@@ -295,10 +293,8 @@ console.log(text);
 }
 
 
-/* ======================================================
-   hjälpfunktion som gör om HH:mm till minuter
-   detta behövs så jag kan jämföra tider bättre
-====================================================== */
+/*hjälpfunktion som gör om HH:mm till minuter
+   detta behövs så jag kan jämföra tider bättre*/
 
 function toMinutes(hhmm){
 const parts = hhmm.split(":");
@@ -308,11 +304,9 @@ return hours * 60 + minutes;
 }
 
 
-/* ======================================================
-   jag startar alarmet
-   här startar jag ljudet bara en gång
-   sedan loopar audio-elementet själv
-====================================================== */
+/* startar alarmet
+   här startar  ljudet bara en gång
+   sedan loopar audio-elementet själv*/
 
 function startAlarm(medicineId,medicineName){
 
@@ -338,9 +332,7 @@ console.log("Alarm play failed:",err);
 }
 
 
-/* ======================================================
-   jag stoppar alarmet helt
-====================================================== */
+/*  stoppar alarmet helt*/
 
 function stopAlarm(){
 
