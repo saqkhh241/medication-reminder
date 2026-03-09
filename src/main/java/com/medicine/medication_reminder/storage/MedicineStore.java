@@ -1,30 +1,37 @@
 package com.medicine.medication_reminder.storage;
-
+//importerar Comparator som används för att sortera mediciner
 import java.util.Comparator;
-import java.util.List;
+import java.util.List;//importerar List eftersom databasen returnerar en lista med mediciner
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Component;//importerar Spring-annotation som gör att spring automatisk skapar ett objekt av denna klass
 
-import com.medicine.medication_reminder.model.Medicine;
+import com.medicine.medication_reminder.model.Medicine; //importerar medicin-klassen som representerar en medicine i systemet
 
-// @Component betyder att Spring hanterar denna klass
-// Den fungerar nu som ett mellanlager mellan controller och databasen
+// @Component betyder att Spring hanterar denna klass automatist
+//när applikationen startar skapar Spring ett objekt av MedcineStore
+//och gör det tillgängligt för andra delar av programmet
 @Component
 public class MedicineStore {
 
+    //detta är repository-objektet som används för att kommunicera med databasen
+    //repository innehåller metoder som save(), findAll(), deleteById() osv
     private final MedicineRepository repository;
 
-    // Spring skickar in repository automatiskt
+    // konstruktor som används för dependency injection
+    //Spring skickar automatiskt in MedicineRepository när applikationen startar
     public MedicineStore(MedicineRepository repository) {
+        
         this.repository = repository;
     }
 
     // metod för att lägga till en medicin i databasen
     public void add(Medicine m) {
+        //repository.save() sparar medicinen i databasen
+        //om medicinen inte finns skapas en ny rad i tabellen
         repository.save(m);
     }
 
-    // returnerar alla mediciner från databasen
+    // metod returnerar alla mediciner från databasen
     public List<Medicine> getAll() {
         List<Medicine> medicines = repository.findAll();
 
