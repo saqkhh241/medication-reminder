@@ -17,6 +17,8 @@ public class Medicine implements Comparable<Medicine>{
 
     private String name;
     private LocalTime time;
+    private String days;
+    
     private String description;
 
     // sparar vilket datum medicinen togs senast
@@ -28,7 +30,7 @@ public class Medicine implements Comparable<Medicine>{
     }
 
     // vanlig konstruktor som används när vi skapar ny medicin i appen
-    public Medicine(String name, LocalTime time, String description){
+    public Medicine(String name, LocalTime time,String days,  String description){
 
         //kontrollerar att name inte är null eller tomt
         //isBlank betyder att strängen är tom eller bara innehåller mellanslag
@@ -46,6 +48,7 @@ public class Medicine implements Comparable<Medicine>{
         //om description är null sparas en tom sträng istället 
         //Annars sparas beskrivningen utan extra mellanslag
         this.name = name.trim();
+        this.days = days == null ? "" : days.trim();
         this.description = description == null ? "" : description.trim();
         this.time = time; //sparar tiden för medicinen
         this.takenDate = null; // från början inte tagen
@@ -65,6 +68,10 @@ public class Medicine implements Comparable<Medicine>{
     public LocalTime getTime(){
         return time;
     }
+
+    public String getDays(){
+    return days;
+}
 
     //returnarar medicinen beskrivning
     public String getDescription(){

@@ -2,6 +2,7 @@ package com.medicine.medication_reminder.controller;
 
 // Importerar LocalTime för att kunna konvertera tiden från formuläret till ett LocalTime-objekt
 import java.time.LocalTime;
+import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -73,14 +74,18 @@ public class MedicineController {
         // Hämtar tiden från formuläret (kommer som text)
         @RequestParam String time,
 
+        @RequestParam(required = false) List<String> days,
+
+
         // description är optional (required=false)
         // om användaren inte skriver något blir den null
         @RequestParam(required = false) String description
     ) {
+        String daysString = days == null ? "" : String.join(",", days);
 
         // Skapar ett nytt Medicine-objekt
         // LocalTime.parse konverterar texten till ett LocalTime-objekt
-        store.add(new Medicine(name, LocalTime.parse(time), description));
+        store.add(new Medicine(name, LocalTime.parse(time),daysString, description));
 
         // Efter att medicinen lagts till skickas användaren tillbaka till listan
         return "redirect:/medicines";

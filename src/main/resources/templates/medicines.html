@@ -1,452 +1,775 @@
-
-<!-- den här filen har appens översikt och userinterfaces där användare knappar in och intragerar med systemet-->
-
+<!-- denna fil visar mediciner som en fysisk medicinbox -->
 
 <!doctype html>
 <html lang="sv" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Medicines</title>
 
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#111827">
 
-<script>
-//visar i console att denna version av filen verkligen laddas
-console.log("NEW VERSION LOADED");
-</script>
-
 <style>
-/* ===== layout och design ===== */
+
+/* ===== Layout ===== */
 
 body{
-  font-family: Arial, Helvetica, sans-serif;
-  margin:0;
-  background:#f6f7fb;
-  color:#111827;
+font-family: Arial, Helvetica, sans-serif;
+margin:0;
+background:#f4f6fb;
+color:#111827;
 }
 
 header{
-  background:#111827;
-  color:white;
-  padding:16px;
+background:#111827;
+color:white;
+padding:18px;
 }
 
 header h1{
-  margin:0;
-  font-size:22px;
+margin:0;
+font-size:22px;
 }
 
 main{
-  max-width:720px;
-  margin:0 auto;
-  padding:16px;
+max-width:900px;
+margin:auto;
+padding:20px;
 }
 
-/* knapp för att lägga till medicin */
 .add{
-  display:block;
-  width:220px;
-  margin:20px auto;
-  text-align:center;
-  background:#2563eb;
-  color:white;
-  text-decoration:none;
-  padding:16px 20px;
-  border-radius:14px;
-  font-size:18px;
-  font-weight:700;
-  box-shadow:0 6px 16px rgba(0,0,0,0.15);
+display:block;
+width:230px;
+margin:20px auto;
+text-align:center;
+background:#2563eb;
+color:white;
+text-decoration:none;
+padding:16px;
+border-radius:14px;
+font-size:18px;
+font-weight:700;
+box-shadow:0 6px 16px rgba(0,0,0,0.15);
 }
 
-.empty{
-  margin-top:14px;
-  color:#6b7280;
+/* ===== Banner för nästa medicin ===== */
+
+.next-banner{
+max-width:560px;
+margin:0 auto 18px auto;
+background:white;
+border-radius:14px;
+padding:14px 18px;
+box-shadow:0 4px 14px rgba(0,0,0,0.08);
+text-align:center;
+font-weight:700;
+font-size:16px;
 }
 
-/* lista med mediciner */
+.next-banner.upcoming{
+background:#dbeafe;
+color:#1d4ed8;
+}
+
+.next-banner.tomorrow{
+background:#fef3c7;
+color:#92400e;
+}
+
+.next-banner.done{
+background:#dcfce7;
+color:#166534;
+}
+
+/* ===== Rutnät för mediciner ===== */
+
 ul{
-  list-style:none;
-  padding:0;
-  margin:16px 0 0 0;
+list-style:none;
+padding:0;
+margin-top:30px;
+display:grid;
+grid-template-columns:repeat(auto-fill,150px);
+gap:22px;
+justify-content:center;
 }
 
-/* varje medicinrad */
 li{
-  background:white;
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:12px;
-  box-shadow:0 4px 14px rgba(0,0,0,0.08);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
+background:white;
+border-radius:14px;
+height:170px;
+width:150px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+box-shadow:0 6px 14px rgba(0,0,0,0.1);
+transition:0.2s;
+position:relative;
 }
 
-.info{
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-  min-width:220px;
+li:hover{
+transform:translateY(-3px);
 }
 
-.topline{
-  display:flex;
-  gap:8px;
-  align-items:baseline;
-  flex-wrap:wrap;
+/* grön bakgrund om medicinen redan är tagen */
+li[data-taken="true"]{
+background:#dcfce7;
 }
 
 .time{
-  font-size:18px;
-  font-weight:700;
+font-size:24px;
+font-weight:700;
 }
 
 .name{
-  font-size:16px;
-  font-weight:600;
+font-size:20px;
+font-weight:600;
+text-align:center;
+padding:0 4px;
 }
 
-.desc{
-  font-size:14px;
-  color:#6b7280;
+.pill{
+font-size:26px;
+margin:8px 0;
 }
 
-/* statusetikett */
 .status{
-  font-size:13px;
-  font-weight:700;
-  padding:3px 8px;
-  border-radius:999px;
-  width:fit-content;
-}
-
-.status.taken{
-  background:#dcfce7;
-  color:#166534;
-}
-
-.status.not{
-  background:#fee2e2;
-  color:#991b1b;
+font-size:12px;
+font-weight:700;
+margin-bottom:6px;
+text-align:center;
 }
 
 .actions{
-  display:flex;
-  gap:8px;
-  align-items:center;
+display:flex;
+gap:6px;
 }
 
 button{
-  border:none;
-  padding:9px 12px;
-  border-radius:10px;
-  cursor:pointer;
-  font-weight:600;
+border:none;
+border-radius:8px;
+padding:10px 14px;
+cursor:pointer;
+font-size:16px;
+font-weight:600;
 }
 
+/* lite färg på take/undo-knappen */
 .btn-take{
-  background:#e5e7eb;
-  color:#111827;
+background:#e5e7eb;
+color:#111827;
 }
 
 .btn-delete{
-  background:#ef4444;
-  color:white;
+background:#ef4444;
+color:white;
 }
 
-button:hover{
-  filter:brightness(0.97);
+/* ===== Blinkande alarm-markering ===== */
+
+.alarm-active{
+animation:alarmBlink 1s infinite;
+border:3px solid #dc2626;
 }
+
+@keyframes alarmBlink{
+0%{background:#ffffff;}
+50%{background:#fee2e2;}
+100%{background:#ffffff;}
+}
+
+/* ===== Popup-rutor ===== */
+
+.popup-overlay{
+position:fixed;
+top:0;
+left:0;
+width:100vw;
+height:100vh;
+background:rgba(0,0,0,0.6);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:9999;
+}
+
+.popup-box{
+background:white;
+padding:30px;
+border-radius:12px;
+text-align:center;
+min-width:320px;
+max-width:420px;
+box-shadow:0 10px 30px rgba(0,0,0,0.35);
+}
+
+.popup-box h2{
+margin-top:0;
+}
+
+.popup-actions{
+margin-top:20px;
+display:flex;
+justify-content:center;
+gap:10px;
+}
+
+.popup-btn{
+padding:10px 20px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-size:15px;
+font-weight:700;
+}
+
+.popup-btn-primary{
+background:#2563eb;
+color:white;
+}
+
+.popup-btn-danger{
+background:#ef4444;
+color:white;
+}
+
+.popup-btn-secondary{
+background:#e5e7eb;
+color:#111827;
+}
+
 </style>
 </head>
 
 <body>
 
 <header>
-<h1>Medicine list test 999</h1>
+<h1>Medicine Box</h1>
+<div id="todayText" style="text-align:center;font-weight:700;margin-top:6px;"></div>
 </header>
 
 <main>
 
-<p>
-<a class="add" href="/medicines/new">+ Add medicine</a>
-</p>
-
-<!-- visas om inga mediciner finns -->
-<div class="empty" th:if="${#lists.isEmpty(medicines)}">
-No medicines yet.
+<!-- banner som visar nästa medicin -->
+<div id="nextMedicineBanner" class="next-banner done">
+No pending medicines
 </div>
 
-<ul>
+<a class="add" href="/medicines/new">+ Add medicine</a>
+
+<ul id="medicineList">
 
 <!-- thymeleaf loop som skriver ut alla mediciner -->
 <li th:each="m : ${medicines}"
 th:attr="data-id=${m.id},
 data-time=${#temporals.format(m.time,'HH:mm')},
 data-name=${m.name},
+data-desc=${m.description},
+data-days=${m.days},
 data-taken=${m.takenToday}">
 
-<div class="info">
+<div class="time" th:text="${#temporals.format(m.time,'HH:mm')}"></div>
 
-<div class="topline">
-<span class="time" th:text="${#temporals.format(m.time,'HH:mm')}">08:00</span>
-<span class="name" th:text="${m.name}">Alvedon</span>
-</div>
+<div class="name" th:text="${m.name}"></div>
 
-<div class="desc" th:text="${m.description}">after breakfast</div>
+<div class="pill">💊</div>
 
-<!-- visar om medicinen tagits -->
-<span class="status"
-th:classappend="${m.takenToday} ? ' taken' : ' not'"
-th:text="${m.takenToday} ? '✔ Taken' : 'Not taken'">
-Not taken
-</span>
-
-</div>
+<div class="status"
+th:text="${m.takenToday} ? '✔ Taken' : 'Not taken'"></div>
 
 <div class="actions">
 
 <!-- knapp för att markera medicinen som tagen -->
-<form method="post" action="/medicines/toggle" style="display:inline;">
+<form method="post" action="/medicines/toggle" class="toggle-form">
 <input type="hidden" name="id" th:value="${m.id}">
-<button class="btn-take" type="submit"
-th:text="${m.takenToday} ? 'Undo' : 'Take'">
-Take
-</button>
+<button type="submit"
+class="btn-take"
+th:text="${m.takenToday} ? 'Undo' : 'Take'"></button>
 </form>
 
-<!-- knapp för att ta bort medicinen 
-<form method="post" action="/medicines/delete" style="display:inline;">
-<input type="hidden" name="id" th:value="${m.id}">
-<button class="btn-delete" type="submit"
-  onclick="return confirm('Are you sure you want to delete this medicine?')">
-  Delete
-</button>
-</form> -->
 <!-- knapp för att ta bort medicinen -->
-<form method="post" action="/medicines/delete" style="display:inline;"
-      onclick="return confirm('Are you sure you want to delete this medicine?')">
-  <input type="hidden" name="id" th:value="${m.id}">
-  <button class="btn-delete" type="submit">Delete</button>
+<form method="post" action="/medicines/delete" class="delete-form">
+<input type="hidden" name="id" th:value="${m.id}">
+<button type="button"
+class="btn-delete"
+th:attr="data-name=${m.name}">
+Delete
+</button>
 </form>
 
 </div>
 
 </li>
+
 </ul>
 
 </main>
 
-<!-- audio-element som innehåller alarm.mp3
-har lagt loop här så ljudet fortsätter automatiskt tills jag stoppar det -->
+<!-- AUDIO för alarm -->
 <audio id="alarmAudio" src="/alarm-new.mp3" preload="auto" loop></audio>
+
+<!-- ALARM POPUP: visas när det är dags att ta medicin -->
+<div id="alarmPopup" class="popup-overlay">
+<div class="popup-box">
+<h2>⏰ Time to take medicine</h2>
+<p id="alarmMedicineName"></p>
+<p id="alarmMedicineDesc"></p>
+
+<div class="popup-actions">
+<button class="popup-btn popup-btn-primary"
+onclick="closeAlarmPopup()">OK</button>
+</div>
+</div>
+</div>
+
+<!-- DELETE POPUP: bekräftelse innan borttagning -->
+<div id="deletePopup" class="popup-overlay">
+<div class="popup-box">
+<h2>Delete medicine</h2>
+<p id="deleteMedicineText"></p>
+
+<div class="popup-actions">
+<button class="popup-btn popup-btn-danger"
+onclick="confirmDelete()">Yes</button>
+
+<button class="popup-btn popup-btn-secondary"
+onclick="closeDeletePopup()">Cancel</button>
+</div>
+</div>
+</div>
+
+<!-- EARLY TAKE POPUP: visas om användaren försöker ta medicinen före rätt tid -->
+<div id="earlyTakePopup" class="popup-overlay">
+<div class="popup-box">
+<h2>Take medicine early?</h2>
+<p id="earlyTakeText"></p>
+
+<div class="popup-actions">
+<button class="popup-btn popup-btn-primary"
+onclick="confirmEarlyTake()">Yes</button>
+
+<button class="popup-btn popup-btn-secondary"
+onclick="closeEarlyTakePopup()">Cancel</button>
+</div>
+</div>
+</div>
 
 <script>
 
-/* ======================================================
-  variabler som  använder i hela scriptet
-====================================================== */
+const alarmAudio=document.getElementById("alarmAudio");
 
-/*  hämtar ljudfilen från audio-elementet */
-const alarmAudio = document.getElementById("alarmAudio");
+/* variabler som håller koll på alarm och popup-formulär */
+let activeAlarmId=null;
+let dismissedAlarmId=null;
+let pendingDeleteForm=null;
+let pendingTakeForm=null;
+let audioUnlocked=false;
 
-/* browsern kräver ett klick innan ljud får spelas */
-let audioUnlocked = false;
+/* ===== Hjälpfunktioner ===== */
 
-/* sparar vilken medicin som just nu larmar */
-let activeAlarmId = null;
+/* omvandlar tid från "HH:mm" till antal minuter */
+function toMinutes(hhmm){
+const p=hhmm.split(":");
+return parseInt(p[0])*60+parseInt(p[1]);
+}
 
+/* gör texten snygg i banner */
+function formatMinutesToText(minutes){
+if(minutes === 1) return "1 minute";
+return minutes + " minutes";
+}
 
-/*låser upp ljudet efter första klicket
-  annars blockerar browsern ljudet*/
+/* hämtar dagens veckodag i samma format som checkbox-värdena */
+function getTodayName(){
+const dayNames = ["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"];
+return dayNames[new Date().getDay()];
+}
 
-function unlockAudioOnce(){
+/* visar dagens veckodag i toppen */
+function showTodayText(){
+const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const today = new Date().getDay();
 
+document.getElementById("todayText").innerText =
+"Today: " + dayNames[today];
+}
+
+/* kontrollerar om medicinen gäller idag */
+function isForToday(item){
+const days=item.dataset.days || "";
+const todayName=getTodayName();
+
+if(days === ""){
+return true;
+}
+
+return days.includes(todayName);
+}
+
+/* visar bara mediciner som gäller idag */
+function showOnlyTodayMedicines(){
+document.querySelectorAll("#medicineList li").forEach(item=>{
+if(isForToday(item)){
+item.style.display="flex";
+}else{
+item.style.display="none";
+}
+});
+}
+
+/* ===== Audio unlock ===== */
+
+/* vissa browsers kräver ett första klick innan ljud får spelas */
+function unlockAudio(){
 if(audioUnlocked) return;
 
-audioUnlocked = true;
+audioUnlocked=true;
 
-/* spelar och pausar direkt bara för att aktivera ljudet i browsern */
 alarmAudio.play()
 .then(()=>{
 alarmAudio.pause();
-alarmAudio.currentTime = 0;
-console.log("Audio unlocked");
+alarmAudio.currentTime=0;
 })
-.catch(err => console.log("Audio unlock failed:", err));
-
+.catch(()=>{});
 }
 
-/* körs första gången användaren klickar på sidan */
-document.addEventListener("click",unlockAudioOnce,{once:true});
-document.addEventListener("touchstart",unlockAudioOnce,{once:true});
+document.addEventListener("click",unlockAudio,{once:true});
+document.addEventListener("touchstart",unlockAudio,{once:true});
 
+/* ===== Browser notification ===== */
 
-/* 
-  notifikation i browsern
-*/
-
-if("Notification" in window && Notification.permission === "default"){
+if("Notification" in window && Notification.permission==="default"){
 Notification.requestPermission();
 }
 
 function notify(text){
-
-if("Notification" in window && Notification.permission === "granted"){
+if("Notification" in window && Notification.permission==="granted"){
 new Notification(text);
 }
-else{
-console.log(text);
 }
 
+/* ===== Alarm-markering ===== */
+
+/* tar bort blink från alla mediciner */
+function clearAlarmHighlight(){
+document.querySelectorAll("li.alarm-active").forEach(item=>{
+item.classList.remove("alarm-active");
+});
 }
 
+/* markerar medicinen som just nu larmar */
+function highlightAlarmMedicine(id){
+clearAlarmHighlight();
 
-/*hjälpfunktion som gör om HH:mm till minuter
-   detta behövs så jag kan jämföra tider bättre*/
-
-function toMinutes(hhmm){
-const parts = hhmm.split(":");
-const hours = parseInt(parts[0],10);
-const minutes = parseInt(parts[1],10);
-return hours * 60 + minutes;
+const target=document.querySelector('li[data-id="'+id+'"]');
+if(target){
+target.classList.add("alarm-active");
+}
 }
 
+/* ===== Alarm popup ===== */
 
-/* startar alarmet
-   här startar  ljudet bara en gång
-   sedan loopar audio-elementet själv*/
+/* visar alarm-popup */
+function showAlarmPopup(name,desc){
+document.getElementById("alarmMedicineName").innerText=name;
+document.getElementById("alarmMedicineDesc").innerText=desc || "";
+document.getElementById("alarmPopup").style.display="flex";
+}
 
-function startAlarm(medicineId,medicineName){
-
-/* om samma medicin redan larmar så gör jag inget */
-if(activeAlarmId === medicineId) return;
-
-/* om någon annan medicin larmade innan så stoppar jag den först */
+/* stänger alarm-popup och stoppar ljud */
+function closeAlarmPopup(){
+document.getElementById("alarmPopup").style.display="none";
+dismissedAlarmId=activeAlarmId;
 stopAlarm();
+}
 
-activeAlarmId = medicineId;
+/* ===== Alarm-logik ===== */
 
-/* visar notifikation */
-notify("Time to take medicine: " + medicineName);
+function startAlarm(id,name,desc){
 
-/* startar ljudet från början */
-alarmAudio.currentTime = 0;
-alarmAudio.play().catch(err=>{
-console.log("Alarm play failed:",err);
+/* starta inte samma alarm igen */
+if(activeAlarmId===id) return;
+
+/* om användaren redan stängt detta alarm, starta inte om direkt */
+if(dismissedAlarmId===id) return;
+
+activeAlarmId=id;
+
+notify("Time to take medicine: "+name);
+
+highlightAlarmMedicine(id);
+showAlarmPopup(name,desc);
+
+alarmAudio.currentTime=0;
+alarmAudio.play().catch(()=>{});
+}
+
+/* stoppar alarmet */
+function stopAlarm(){
+alarmAudio.pause();
+alarmAudio.currentTime=0;
+activeAlarmId=null;
+clearAlarmHighlight();
+}
+
+/* ===== Sortering av mediciner ===== */
+
+function sortMedicines(){
+
+const list=document.getElementById("medicineList");
+const items=[...list.children];
+
+const now=new Date();
+const currentMinutes=now.getHours()*60+now.getMinutes();
+
+items.sort((a,b)=>{
+
+const takenA=a.dataset.taken==="true";
+const takenB=b.dataset.taken==="true";
+
+const timeA=toMinutes(a.dataset.time);
+const timeB=toMinutes(b.dataset.time);
+
+const activeTodayA=isForToday(a);
+const activeTodayB=isForToday(b);
+
+/* mediciner för idag ska visas före andra dagar */
+if(activeTodayA && !activeTodayB) return -1;
+if(!activeTodayA && activeTodayB) return 1;
+
+/* ej tagna mediciner ska visas före tagna */
+if(takenA && !takenB) return 1;
+if(!takenA && takenB) return -1;
+
+/* om båda inte är tagna */
+if(!takenA && !takenB){
+
+const futureA=timeA>=currentMinutes;
+const futureB=timeB>=currentMinutes;
+
+if(futureA && !futureB) return -1;
+if(!futureA && futureB) return 1;
+
+return timeA-timeB;
+}
+
+/* om båda är tagna -> senaste tider först */
+return timeB-timeA;
 });
 
-/*console.log("Alarm started for:", medicineName);*/
-
+items.forEach(item=>list.appendChild(item));
 }
 
+/* ===== Banner för nästa medicin ===== */
 
-/*  stoppar alarmet helt*/
+function updateNextMedicineBanner(){
 
-function stopAlarm(){
+const banner=document.getElementById("nextMedicineBanner");
+const items=[...document.querySelectorAll("#medicineList li")];
 
-alarmAudio.pause();
-alarmAudio.currentTime = 0;
-activeAlarmId = null;
+const now=new Date();
+const currentMinutes=now.getHours()*60+now.getMinutes();
 
-console.log("Alarm stopped");
+/* hitta alla mediciner för idag som inte är tagna */
+const untakenItems=items.filter(item=>
+item.dataset.taken!=="true" && isForToday(item)
+);
 
+if(untakenItems.length===0){
+banner.className="next-banner done";
+banner.innerText="No pending medicines";
+return;
 }
 
+/* framtida mediciner idag */
+let future=untakenItems.filter(item=>toMinutes(item.dataset.time)>=currentMinutes);
 
-/* ======================================================
-   jag kollar varje sekund om någon medicin
-   ska tas nu eller redan skulle ha tagits
-   alarmet fortsätter tills man trycker take
-====================================================== */
+if(future.length>0){
+
+future.sort((a,b)=>toMinutes(a.dataset.time)-toMinutes(b.dataset.time));
+
+const next=future[0];
+const diff=toMinutes(next.dataset.time)-currentMinutes;
+
+banner.className="next-banner upcoming";
+banner.innerText=
+"⏰ Next medicine: "+
+next.dataset.name+
+" at "+
+next.dataset.time+
+" today (in "+formatMinutesToText(diff)+")";
+
+return;
+}
+
+/* om inga fler tider finns idag, visa första otagna som nästa dag */
+untakenItems.sort((a,b)=>toMinutes(a.dataset.time)-toMinutes(b.dataset.time));
+
+const tomorrow=untakenItems[0];
+
+banner.className="next-banner tomorrow";
+banner.innerText=
+"🌙 Next medicine: "+
+tomorrow.dataset.name+
+" at "+
+tomorrow.dataset.time+
+" tomorrow";
+}
+
+/* ===== Kontroll av mediciner varje sekund ===== */
 
 function checkMedicines(){
 
-const now = new Date();
+const now=new Date();
+const currentMinutes=now.getHours()*60+now.getMinutes();
 
-/* nuvarande tid i format HH:mm */
-const currentHHMM =
-String(now.getHours()).padStart(2,"0")+":"+
-String(now.getMinutes()).padStart(2,"0");
+let dueMedicine=null;
 
-/* gör om nuvarande tid till minuter */
-const currentMinutes = toMinutes(currentHHMM);
-
-/* här sparar jag om det finns någon medicin som borde tas men inte är tagen */
-let firstDueUntakenMedicine = null;
-
-/* jag går igenom alla mediciner i listan */
 document.querySelectorAll("li[data-time]").forEach(item=>{
 
-const id = item.dataset.id;
-const time = item.dataset.time;
-const name = item.dataset.name;
-const taken = item.dataset.taken === "true";
-
-/* gör om medicinens tid till minuter */
-const medicineMinutes = toMinutes(time);
-
-/* om tiden har kommit eller passerat och medicinen inte är tagen
-   då räknas den som aktiv */
-if(!taken && medicineMinutes <= currentMinutes){
-
-/* jag tar första medicinen jag hittar som är due och inte tagen */
-if(firstDueUntakenMedicine === null){
-firstDueUntakenMedicine = {
-id: id,
-name: name
-};
+if(!isForToday(item)){
+return;
 }
 
-}
+const id=item.dataset.id;
+const time=item.dataset.time;
+const name=item.dataset.name;
+const desc=item.dataset.desc;
+const taken=item.dataset.taken==="true";
 
+const medicineMinutes=toMinutes(time);
+
+/* om medicinen inte är tagen och tiden är exakt nu */
+if(!taken && medicineMinutes === currentMinutes){
+if(dueMedicine===null){
+dueMedicine={id,name,desc};
+}
+}
 });
 
-/* om det finns en medicin som borde tas och inte är tagen
-   då ska alarmet vara igång */
-if(firstDueUntakenMedicine !== null){
+if(dueMedicine){
 
-/* starta alarmet om den inte redan är aktiv */
-if(activeAlarmId !== firstDueUntakenMedicine.id){
-startAlarm(firstDueUntakenMedicine.id, firstDueUntakenMedicine.name);
+if(dismissedAlarmId !== dueMedicine.id){
+dismissedAlarmId=null;
 }
 
+if(activeAlarmId!==dueMedicine.id){
+startAlarm(dueMedicine.id,dueMedicine.name,dueMedicine.desc);
 }
-else{
-/* om ingen medicin längre är aktuell stoppar jag alarmet */
-if(activeAlarmId !== null){
+
+}else{
 stopAlarm();
+dismissedAlarmId=null;
+}
+
+showTodayText();
+showOnlyTodayMedicines();
+updateNextMedicineBanner();
+sortMedicines();
+}
+
+/* ===== Delete popup ===== */
+
+function openDeletePopup(form,name){
+
+/* stäng eventuellt alarm innan delete-popup visas */
+stopAlarm();
+document.getElementById("alarmPopup").style.display="none";
+
+pendingDeleteForm=form;
+
+document.getElementById("deleteMedicineText").innerText=
+"Do you want to delete " + name + " medicine?";
+
+document.getElementById("deletePopup").style.display="flex";
+}
+
+function closeDeletePopup(){
+document.getElementById("deletePopup").style.display="none";
+pendingDeleteForm=null;
+}
+
+function confirmDelete(){
+if(pendingDeleteForm){
+pendingDeleteForm.submit();
 }
 }
 
+/* ===== Early take popup ===== */
+
+/* öppnar popup om användaren försöker ta medicin innan rätt tid */
+function openEarlyTakePopup(form,name,time){
+
+stopAlarm();
+document.getElementById("alarmPopup").style.display="none";
+
+pendingTakeForm=form;
+
+document.getElementById("earlyTakeText").innerText=
+"It is not time for " + name + " yet (scheduled at " + time + "). Do you want to take it anyway?";
+
+document.getElementById("earlyTakePopup").style.display="flex";
 }
 
-/* jag kör kontrollen varje sekund */
+/* stänger early take-popup */
+function closeEarlyTakePopup(){
+document.getElementById("earlyTakePopup").style.display="none";
+pendingTakeForm=null;
+}
+
+/* om användaren väljer ja skickas formuläret ändå */
+function confirmEarlyTake(){
+if(pendingTakeForm){
+pendingTakeForm.submit();
+}
+}
+
+/* ===== Events ===== */
+
+/* delete-knappar öppnar popup istället för att skicka direkt */
+document.querySelectorAll(".btn-delete").forEach(btn=>{
+btn.addEventListener("click",function(){
+
+const form=btn.closest("form");
+const name=btn.dataset.name;
+
+openDeletePopup(form,name);
+});
+});
+
+/* kontrollera take/undo innan formuläret skickas */
+document.querySelectorAll(".toggle-form").forEach(form=>{
+form.addEventListener("submit",function(e){
+
+const item=form.closest("li");
+const taken=item.dataset.taken==="true";
+const medicineTime=toMinutes(item.dataset.time);
+
+const now=new Date();
+const currentMinutes=now.getHours()*60+now.getMinutes();
+
+/* stoppa alarm-popup om användaren klickar */
+stopAlarm();
+document.getElementById("alarmPopup").style.display="none";
+
+/* bara för Take, inte för Undo */
+if(!taken && currentMinutes < medicineTime){
+e.preventDefault();
+openEarlyTakePopup(form,item.dataset.name,item.dataset.time);
+}
+});
+});
+
+/* ===== Start ===== */
+
+showTodayText();
+showOnlyTodayMedicines();
+sortMedicines();
+updateNextMedicineBanner();
+
 setInterval(checkMedicines,1000);
-console.log("Audio src:", alarmAudio.currentSrc);
-
-/* jag kör också direkt när sidan laddas */
 checkMedicines();
-
-</script>
-
-<script>
-
-/* ======================================================
-   registrerar service worker för pwa funktioner
-====================================================== */
-
-if("serviceWorker" in navigator){
-
-navigator.serviceWorker.register("/service-worker.js")
-.then(()=>console.log("Service worker registered"))
-.catch(err=>console.log("Service worker error",err));
-
-}
 
 </script>
 
