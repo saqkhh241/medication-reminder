@@ -17,12 +17,15 @@ public class MedicineStore {
     //repository innehåller metoder som save(), findAll(), deleteById() osv
     private final MedicineRepository repository;
 
+    public MedicineStore(MedicineRepository repository) {
+      this.repository = repository;
+   }
     // konstruktor som används för dependency injection
     //Spring skickar automatiskt in MedicineRepository när applikationen startar
-    public MedicineStore(MedicineRepository repository) {
-        
-        this.repository = repository;
-    }
+   // sparar den nya medicinen i database
+   public void add1(Medicine m){
+      this.repository.save(m);
+   }
 
     // metod för att lägga till en medicin i databasen
     public void add(Medicine m) {
