@@ -178,13 +178,6 @@
 <main>
 
   <div class="card">
-
-    <!--
-      Formuläret skickas med POST till /medicines
-      Detta måste matcha controller-metoden:
-      @PostMapping("/medicines")
-    -->
-
     <form method="post" action="/medicines">
 
       <!-- ===== Name ===== -->
@@ -204,21 +197,10 @@
       </div>
 
 
-      <!-- ===== Time ===== -->
+      <!--  Time  -->
 
       <div class="row">
-        <label for="time">Time</label>
-
-        <!--
-          Vi använder Flatpickr istället för browserns time input.
-
-          Fördelar:
-          - 24h format
-          - ingen AM/PM
-          - användaren klickar för att välja tid
-          - värdet skickas som HH:mm
-          - fungerar direkt med LocalTime.parse(time)
-        -->
+      <label for="time">Time</label>
 
         <input
           id="time"
@@ -262,7 +244,7 @@
       </div>
 
 
-      <!-- ===== Description ===== -->
+      <!--  Description  -->
 
       <div class="row">
         <label for="description">Description</label>
@@ -278,7 +260,7 @@
       </div>
 
 
-      <!-- ===== Buttons ===== -->
+      <!--  Buttons -->
 
       <div class="actions">
 

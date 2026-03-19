@@ -62,6 +62,18 @@ public class MedicineController {
         // Spring öppnar templates/medicine-form.html
         return "medicine-form";
     }
+    // Denna metod visar hela listan med alla sparade mediciner
+    @GetMapping("/medicines/all")
+    public String listAll(Model model) {
+    
+
+    // Hämtar alla mediciner från databasen
+    model.addAttribute("medicines", store.getAll());
+    
+
+    // Öppnar en ny HTML-sida
+    return "all-medicines";
+}
     
     // Denna metod körs när formuläret skickas
     // Formuläret använder POST-metoden
@@ -93,14 +105,17 @@ public class MedicineController {
 
     // Denna metod körs när användaren trycker på delete-knappen
     @PostMapping("/medicines/delete")
-    public String delete(@RequestParam String id) {
+public String delete(@RequestParam String id,
+                @RequestParam(required = false) String redirectTo) {
 
-        // Tar bort medicinen från databasen baserat på id
-        store.removeById(id);
+    store.removeById(id);
 
-        // Omdirigerar tillbaka till listan
-        return "redirect:/medicines";
+    if (redirectTo != null) {
+        return "redirect:" + redirectTo;
     }
+
+    return "redirect:/medicines";
+}
 
     // Denna metod körs när användaren trycker på "Take" eller "Undo"
     @PostMapping("/medicines/toggle")

@@ -107,8 +107,30 @@ public class Medicine implements Comparable<Medicine>{
 
     //toString används när objektet ska visas som text
     //Exampel: 08:00 - Alvedon - After breakfast
-    @Override
+        @Override
     public String toString(){
         return time + " - " + name + " - " + description;
     }
-}
+
+    public String getDaysFormatted() {
+        if (days == null || days.isBlank()) {
+            return "Every day";
+        }
+
+        String[] splitDays = days.split(",");
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < splitDays.length; i++) {
+            String day = splitDays[i].trim().toLowerCase();
+            day = day.substring(0, 1).toUpperCase() + day.substring(1);
+
+            result.append(day);
+
+            if (i < splitDays.length - 1) {
+                result.append(", ");
+            }
+        }
+
+        return result.toString();
+    }
+    }
